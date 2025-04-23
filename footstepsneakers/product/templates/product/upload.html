@@ -1,0 +1,100 @@
+{% extends 'footstepsneakers/base.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4">🛠️ Загрузить новый товар</h2>
+
+    {% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Ошибки при отправке:</strong>
+        <ul>
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form action="{% url 'product:upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="card p-4 shadow-sm mb-4">
+            <h4 class="card-title mb-3">Информация о товаре</h4>
+
+            <div class="mb-3">
+                <label for="brand" class="form-label">Бренд</label>
+                <div class="input-group">
+                    <select name="brand" id="brand" class="form-control" required>
+                        <option value="" disabled selected>Выберите бренд</option>
+                        <option value="Nike">Nike</option>
+                        <option value="Adidas">Adidas</option>
+                        <option value="Puma">Puma</option>
+                        <option value="New Balance">New Balance</option>
+                        <option value="Reebok">Reebok</option>
+                        <option value="Asics">Asics</option>
+                        <option value="Vans">Vans</option>
+                        <option value="Converse">Converse</option>
+                        <option value="Under Armour">Under Armour</option>
+                    </select>
+                    <span class="input-group-text">или</span>
+                    <input type="text" name="custom_brand" id="custom_brand" class="form-control"
+                           placeholder="Введите свой бренд (если не выбрали из списка)">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="model" class="form-label">Модель</label>
+                <input type="text" name="model" id="model" class="form-control" placeholder="Введите модель" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="color" class="form-label">Цвет</label>
+                <div class="input-group">
+                    <select name="color" id="color" class="form-control" required>
+                        <option value="" disabled selected>Выберите цвет</option>
+                        <option value="Black">Черный</option>
+                        <option value="White">Белый</option>
+                        <option value="Red">Красный</option>
+                        <option value="Blue">Синий</option>
+                        <option value="Green">Зеленый</option>
+                        <option value="Grey">Серый</option>
+                        <option value="Yellow">Желтый</option>
+                        <option value="Pink">Розовый</option>
+                    </select>
+                    <span class="input-group-text">или</span>
+                    <input type="text" name="custom_color" id="custom_color" class="form-control"
+                           placeholder="Введите свой цвет (если не выбрали из списка)">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class="form-label">Цена в $</label>
+                <input type="number" name="price" id="price" class="form-control" placeholder="Укажите цену" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Описание</label>
+                <textarea name="description" id="description" class="form-control" placeholder="Добавьте описание"
+                          required></textarea>
+            </div>
+
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="is_public" name="is_public" value="True">
+                <label class="form-check-label" for="is_public">Хотите что б этот товар видели другие пользователи?</label>
+            </div>
+            <div class="mb-3">
+                <label for="path" class="form-label">Загрузить изображение</label>
+                <input type="file" name="path" id="path" class="form-control" accept="image/*" required>
+                <div class="text-danger">{{ form.errors.path }}</div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary">Загрузить</button>
+            <button type="reset" class="btn btn-secondary">Сбросить</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

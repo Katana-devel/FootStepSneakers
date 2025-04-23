@@ -1,0 +1,38 @@
+{% extends 'footstepsneakers/base.html' %}
+
+{% block body %}
+<div class="container mt-3">
+    <h1>Наши кроссовки</h1>
+    <div class="row">
+        {% for pic in sneakers %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ pic.path.url }}" class="card-img-top" alt="Sneaker image"
+                     style="height: 400px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ pic.sneakers.brand }} - {{ pic.sneakers.model }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ pic.sneakers.color }}</h6>
+                    <p class="card-text">
+                        <strong>Color:</strong> {{ pic.sneakers.color }}<br>
+                        <strong>Price:</strong> ${{ pic.sneakers.price }}<br>
+                        <strong>Description:</strong> {{ pic.sneakers.description|truncatewords:15 }}
+                    </p>
+                </div>
+                {% if pic.sneakers %}
+                <a href="{% url 'cartitem:add_to_cart' pic.id %}" class="btn btn-outline-primary btn-sm">
+                    Add to cart
+                </a>
+
+                {% else %}
+                <span class="text-muted">Нет товара</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center">Пока что нет изображений.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

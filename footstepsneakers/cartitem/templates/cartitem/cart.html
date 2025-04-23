@@ -1,0 +1,43 @@
+{% extends 'footstepsneakers/base.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2 class="mb-4">Ваша корзина</h2>
+
+    {% if cart_items %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Бренд</th>
+                        <th scope="col">Модель</th>
+                        <th scope="col">Цвет</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col">Кол-во</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.sneakers.brand }}</td>
+                        <td>{{ item.sneakers.model }}</td>
+                        <td>{{ item.sneakers.color }}</td>
+                        <td>${{ item.sneakers.price|floatformat:2 }}</td>
+                        <td>{{ item.quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-end mt-4">
+            <h4><strong>Общая сумма:</strong> ${{ total|floatformat:2 }}</h4>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            Ваша корзина пуста.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

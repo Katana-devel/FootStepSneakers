@@ -1,0 +1,61 @@
+{% extends 'footstepsneakers/base.html' %}
+
+{% block body %}
+<div class="container mt-3">
+    {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ form.non_field_errors }}
+        <ul>
+            {% for field in form %}
+            {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form action="{% url 'product:upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Brand</label>
+            <input type="text" name="brand" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Model</label>
+            <input type="text" name="model" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Color</label>
+            <input type="text" name="color" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price in $</label>
+            <input type="number" name="price" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" required></textarea>
+        </div>
+
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="is_public">
+            <label class="form-check-label" for="exampleCheck1">Do you want to public this item?</label>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Upload Image</label>
+            {{ form.path }}
+            <span class="text-danger">{{ form.errors.path }}</span>
+        </div>
+
+        <button type="submit" class="btn btn-success me-2">Добавить</button>
+        <button type="reset" class="btn btn-secondary">Reset</button>
+    </form>
+</div>
+{% endblock %}

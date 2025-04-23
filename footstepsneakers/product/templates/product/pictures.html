@@ -1,0 +1,35 @@
+{% extends 'footstepsneakers/base.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Your Uploaded Sneakers</h1>
+    <p class="text-muted text-center">{{ pics|length }} sneaker{{ pics|length|pluralize }} found.</p>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for pic in pics %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ pic.path.url }}" class="card-img-top" alt="Sneaker image" style="height: 400px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ pic.sneakers.brand }} - {{ pic.sneakers.model }}</h5>
+                    <p class="card-text">
+                        <strong>Color:</strong> {{ pic.sneakers.color }}<br>
+                        <strong>Price:</strong> ${{ pic.sneakers.price }}<br>
+                        <strong>Description:</strong> {{ pic.sneakers.description|default:"No description" }}<br>
+                        <strong>Public:</strong> {{ pic.sneakers.is_public|yesno:"Yes,No" }}
+                    </p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a href="{% url 'product:edit' pic.id %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="{% url 'product:remove' pic.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">You haven’t uploaded any pictures yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
