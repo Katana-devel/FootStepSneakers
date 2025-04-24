@@ -135,7 +135,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-LOGIN_URL = "/auth/signin"
+LOGIN_URL = "/signin/"
 LOGIN_REDIRECT_URL = "/product/"
 
 # Default primary key field type

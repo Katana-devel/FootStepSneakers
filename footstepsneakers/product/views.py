@@ -22,6 +22,7 @@ def pictures(request):
     return render(request, 'product/pictures.html', context={"pics": pics})
 
 
+@login_required
 def upload(request):
     if request.method == "POST":
         brand = request.POST.get("brand")
@@ -42,27 +43,34 @@ def upload(request):
             color=color,
             price=request.POST.get("price"),
             description=request.POST.get("description"),
-            is_public=request.POST.get("is_public", False),
+            is_public=request.POST.get("is_public") == "True",
         )
 
-        if request.FILES.get("path"):
-            sneakers.image = request.FILES["path"]
-            sneakers.save()
+        image_file = request.FILES.get("path")
 
-        return redirect('product:success')
+        if image_file:
+
+            Picture.objects.create(
+                user=request.user,
+                path=image_file,
+                sneakers=sneakers
+            )
+
+        return redirect('product:pictures')
 
     return render(request, 'product/upload.html')
 
 
+
 @login_required
 def edit(request, pic_id):
+    picture = Picture.objects.filter(pk=pic_id, user=request.user).first()
     if request.method == 'POST':
-        desc = request.POST.get('description')
-        price = request.POST.get('price')
-        color = request.POST.get('color')
-        model = request.POST.get('model')
-        brand = request.POST.get('brand')
-        picture = Picture.objects.filter(pk=pic_id, user=request.user).first()
+        desc = request.POST.get('description') or picture.sneakers.description
+        price = request.POST.get('price') or picture.sneakers.price
+        color = request.POST.get('color') or picture.sneakers.color
+        model = request.POST.get('model') or picture.sneakers.model
+        brand = request.POST.get('brand') or picture.sneakers.brand
         if picture:
             picture.sneakers.description = desc
             picture.sneakers.price = price

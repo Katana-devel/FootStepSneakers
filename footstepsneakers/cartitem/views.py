@@ -1,3 +1,4 @@
+from django.contrib.auth import user_logged_in
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, redirect, reverse
@@ -16,16 +17,16 @@ def cart_index(request):
 
 @login_required
 def add_to_cart(request, sneakers_id):
-    sneakers = Sneakers.objects.filter(pk=sneakers_id).first()
-    if request.method == 'POST':
-        if sneakers:
-            quantity = int(request.POST.get('quantity', 1))
-            CartItem.objects.create(
-                user=request.user,
-                sneakers=sneakers,
-                quantity=quantity
-            )
-            return redirect("cartitem:cart")
-        else:
-            return redirect("cartitem:cart")
-    return render(request, 'cartitem/add_to_cart.html', context={"sneakers": sneakers})
+        sneaker = Sneakers.objects.filter(pk=sneakers_id).first()
+        if request.method == 'POST':
+            if sneaker:
+                quantity = int(request.POST.get('quantity', 1))
+                CartItem.objects.create(
+                    user=request.user,
+                    sneakers=sneaker,
+                    quantity=quantity
+                )
+                return redirect("cartitem:cart")
+            else:
+                return redirect("cartitem:cart")
+        return render(request, 'cartitem/add_to_cart.html', context={"sneaker": sneaker})
