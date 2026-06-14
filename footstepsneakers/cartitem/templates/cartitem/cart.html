@@ -2,19 +2,19 @@
 
 {% block body %}
 <div class="container mt-5">
-    <h2 class="mb-4">Ваша корзина</h2>
+    <h2 class="mb-4 fw-bold">Your Cart</h2>
 
     {% if cart_items %}
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col">Бренд</th>
-                        <th scope="col">Модель</th>
-                        <th scope="col">Цвет</th>
-                        <th scope="col">Цена</th>
-                        <th scope="col">Кол-во</th>
-
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Color</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,19 +25,20 @@
                         <td>{{ item.sneakers.color }}</td>
                         <td>${{ item.sneakers.price|floatformat:2 }}</td>
                         <td>{{ item.quantity }}</td>
+                        <td>${{ item.sneakers.price|floatformat:2 }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
 
-        <div class="text-end mt-4">
-            <h4><strong>Общая сумма:</strong> ${{ total|floatformat:2 }}</h4>
+        <div class="text-end mt-3">
+            <h4 class="fw-bold">Total: ${{ total|floatformat:2 }}</h4>
+            <a href="{% url 'product:home' %}" class="btn btn-outline-secondary mt-2">Continue Shopping</a>
         </div>
     {% else %}
-        <div class="alert alert-info" role="alert">
-            Ваша корзина пуста.
-        </div>
+        <div class="alert alert-info">Your cart is empty.</div>
+        <a href="{% url 'product:home' %}" class="btn btn-primary">Browse Sneakers</a>
     {% endif %}
 </div>
 {% endblock %}

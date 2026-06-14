@@ -1,46 +1,35 @@
 {% extends 'footstepsneakers/base.html' %}
 
 {% block body %}
-<div class="container mt-3">
-    <h2>Login User</h2>
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-sm p-4" style="width: 100%; max-width: 420px;">
+        <h2 class="mb-4 fw-bold text-center">Sign In</h2>
 
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <span {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</span>
-        {% endfor %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Username</label>
+                {{ form.username }}
+                <span class="text-danger small">{{ form.username.errors }}</span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Password</label>
+                {{ form.password }}
+                <span class="text-danger small">{{ form.password.errors }}</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+        </form>
+
+        <p class="text-center text-muted mt-3 mb-0 small">
+            Don't have an account? <a href="{% url 'user_app:register' %}">Register</a>
+        </p>
     </div>
-    {% endif %}
-
-    {% if form.errors and form.non_field_errors %}
-    <div class="alert alert-danger" role="alert">
-        {{ form.non_field_errors }}
-    </div>
-    {% endif %}
-
-    <form method="post">
-        {% csrf_token %}
-
-        <div class="mb-3">
-            <label class="form-label">Username</label>
-            {{ form.username }}
-            <span class="text-danger">{{ form.username.errors }}</span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            {{ form.email }}
-            <span class="text-danger">{{ form.email.errors }}</span>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            {{ form.password }}
-            <span class="text-danger">{{ form.password.errors }}</span>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="reset" class="btn btn-secondary">Reset</button>
-    </form>
 </div>
 {% endblock %}

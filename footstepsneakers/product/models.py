@@ -23,7 +23,7 @@ def validate_file_size(value):
     filesize = value.size
 
     if filesize > 1_000_000:
-        raise ValidationError('Максимальний розмір файлу 1Мб')
+        raise ValidationError('Maximum file size is 1MB')
     return value
 
 
