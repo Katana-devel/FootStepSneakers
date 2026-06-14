@@ -52,7 +52,7 @@ python manage.py runserver
 
 To run with Docker:
 <directory> docker compose up -d
-# This will start containers for Django and PostgreSQL. Redis is not used.
+### This will start containers for Django and PostgreSQL. Redis is not used.
 
 Features
 	•	Browse product catalog
