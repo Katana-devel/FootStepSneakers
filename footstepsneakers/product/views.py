@@ -1,39 +1,37 @@
 from pathlib import Path
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required, login_not_required
 from django.conf import settings
+from django.views import View
 
-from product.models import Sneakers
-
-from product.models import Picture
-
-from product.forms import PictureForm
+from product.models import Sneakers, Picture
 
 
-def index(request):
-    sneakers = Picture.objects.filter(sneakers__is_public=True)
-    return render(request, 'product/index.html', {'sneakers': sneakers})
+class ProductIndexView(View):
+    def get(self, request):
+        sneakers = Picture.objects.filter(sneakers__is_public=True)
+        return render(request, 'product/index.html', {'sneakers': sneakers})
 
 
-@login_required
-def pictures(request):
-    pics = Picture.objects.filter(user=request.user).all()
-    return render(request, 'product/pictures.html', context={"pics": pics})
+class PicturesView(LoginRequiredMixin, View):
+    def get(self, request):
+        pics = Picture.get_for_user(request.user)
+        return render(request, 'product/pictures.html', context={"pics": pics})
 
 
-@login_required
-def upload(request):
-    if request.method == "POST":
+class UploadView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'product/upload.html')
+
+    def post(self, request):
         brand = request.POST.get("brand")
         custom_brand = request.POST.get("custom_brand")
-
         if custom_brand:
             brand = custom_brand
 
         color = request.POST.get("color")
         custom_color = request.POST.get("custom_color")
-
         if custom_color:
             color = custom_color
 
@@ -47,54 +45,40 @@ def upload(request):
         )
 
         image_file = request.FILES.get("path")
-
         if image_file:
-
             Picture.objects.create(
                 user=request.user,
                 path=image_file,
-                sneakers=sneakers
+                sneakers=sneakers,
             )
 
         return redirect('product:pictures')
 
-    return render(request, 'product/upload.html')
 
+class EditView(LoginRequiredMixin, View):
+    def get(self, request, pic_id):
+        pic = Picture.objects.filter(pk=pic_id, user=request.user).first()
+        return render(request, 'product/edit_desc.html', context={"pic": pic})
 
-
-@login_required
-def edit(request, pic_id):
-    picture = Picture.objects.filter(pk=pic_id, user=request.user).first()
-    if request.method == 'POST':
-        desc = request.POST.get('description') or picture.sneakers.description
-        price = request.POST.get('price') or picture.sneakers.price
-        color = request.POST.get('color') or picture.sneakers.color
-        model = request.POST.get('model') or picture.sneakers.model
-        brand = request.POST.get('brand') or picture.sneakers.brand
+    def post(self, request, pic_id):
+        picture = Picture.objects.filter(pk=pic_id, user=request.user).first()
         if picture:
-            picture.sneakers.description = desc
-            picture.sneakers.price = price
-            picture.sneakers.color = color
-            picture.sneakers.model = model
-            picture.sneakers.brand = brand
+            picture.sneakers.description = request.POST.get('description') or picture.sneakers.description
+            picture.sneakers.price = request.POST.get('price') or picture.sneakers.price
+            picture.sneakers.color = request.POST.get('color') or picture.sneakers.color
+            picture.sneakers.model = request.POST.get('model') or picture.sneakers.model
+            picture.sneakers.brand = request.POST.get('brand') or picture.sneakers.brand
             picture.sneakers.save()
         return redirect(to="product:pictures")
 
-    pic = Picture.objects.filter(pk=pic_id, user=request.user).first()
-    return render(request, 'product/edit_desc.html', context={"pic": pic})
 
-
-@login_required
-def remove(request, pic_id):
-    pic = Picture.objects.filter(pk=pic_id, user=request.user)
-    file_path: Path = settings.MEDIA_ROOT / str(pic.first().path)
-    if file_path.exists():
-        file_path.unlink()
+class RemoveView(LoginRequiredMixin, View):
+    def get(self, request, pic_id):
+        pic = Picture.objects.filter(pk=pic_id, user=request.user)
+        file_path: Path = settings.MEDIA_ROOT / str(pic.first().path)
+        if file_path.exists():
+            file_path.unlink()
         pic.delete()
-        print('Removed file')
-    else:
-        print('File ont removed')
-
-    return redirect(to="product:pictures")
+        return redirect(to="product:pictures")
 
 
